@@ -4,7 +4,7 @@ import Search from "../islands/Search.tsx";
 const Wordcsr = () => {
   return (
     <>
-      <Header />
+      <Header id={3} />
       <Search />
     </>
   );

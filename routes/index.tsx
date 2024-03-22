@@ -1,12 +1,10 @@
 import Header from "../components/Header.tsx";
 
 const Home = () => {
+  const id = 1;
   return (
     <>
-        <Header />
-        <div>
-          <p>Welcome to my dictionary!</p>
-        </div>
+      <Header id={1} />
     </>
   );
 };

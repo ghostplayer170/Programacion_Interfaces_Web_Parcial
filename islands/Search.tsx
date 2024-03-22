@@ -11,8 +11,8 @@ const Search: FunctionComponent = () => {
 
   const fetchWord = async (wordAux: string) => {
     try {
-      const response = await fetch(`${API_URL}${wordAux}`);
-      if (response.status !== 200) {
+      const response = await fetch(API_URL + wordAux);
+      if (response.status === 200) {
         throw new Response("Error status!==200", { status: 500 });
       }
       const data = await response.json();
@@ -38,19 +38,24 @@ const Search: FunctionComponent = () => {
     }
   };
 
+  const wordWrite = (word: string): boolean => {
+    return word !== "";
+  };
+
   return (
     <>
       <div class="container">
         <div class="wordForm">
           <input
-            type="text"
             placeholder="Type a word"
             onInput={(e) => setWord(e.currentTarget.value)}
+            type="text"
           />
+          <p>{word}</p>
           <button onClick={() => fetchWord(word)}>Search</button>
         </div>
-        {word === "" && <p class="error">Please enter a word</p>}
-        {word !== "" &&
+        {!wordWrite(word) && <p class="error">Please enter a word</p>}
+        {wordWrite(word) &&
           (
             <div class="wordDefinitions">
               <h3>{word}</h3>
