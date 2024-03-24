@@ -1,7 +1,7 @@
 import { FunctionComponent } from "preact";
 import { useState } from "preact/hooks";
 import { Word } from "../types.ts";
-import { getWordDefinition } from "../fecthWord.ts"
+import { getWordDefinition } from "../fecthWord.ts";
 import WordViewer from "../components/WordViewer.tsx";
 
 const WordIsland: FunctionComponent = () => {
