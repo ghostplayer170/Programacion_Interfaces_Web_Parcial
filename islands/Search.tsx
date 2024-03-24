@@ -1,45 +1,22 @@
-import { useState } from "preact/hooks";
 import { FunctionComponent } from "preact";
-import { definitions } from "../types.ts";
-import Definition from "../components/Definition.tsx";
+import { useState } from "preact/hooks";
+import { Word } from "../types.ts";
+import { getWordDefinition } from "../fecthWord.ts"
+import WordViewer from "../components/WordViewer.tsx";
 
-const Search: FunctionComponent = () => {
+const WordIsland: FunctionComponent = () => {
   const [word, setWord] = useState<string>("");
-  const [results, setResults] = useState<definitions[]>([]);
-  const API_URL = Deno.env.get("API_URL") ||
-    "https://api.dictionaryapi.dev/api/v2/entries/en_US/";
+  const [wordData, setWordData] = useState<Word | undefined>(undefined);
+  const [error, setError] = useState<string>("");
 
-  const fetchWord = async (wordAux: string) => {
-    try {
-      const response = await fetch(API_URL + wordAux);
-      if (response.status === 200) {
-        throw new Response("Error status!==200", { status: 500 });
-      }
-      const data = await response.json();
-      const dataTransform = data.map((elem) => {
-        return (
-          {
-            definition: elem[0].meanings.map((elem) => {
-              elem.definitions.map((elem) => {
-                return elem.definition;
-              });
-            }),
-            example: elem[0].meanings.map((elem) => {
-              elem.definitions.map((elem) => {
-                return elem.definition;
-              });
-            }),
-          }
-        );
-      });
-      setResults(dataTransform);
-    } catch (error) {
-      throw new Response("Error fetching word", { status: 500 });
+  const fetchWordDefinition = async (word: string) => {
+    if (!word || word.length === 0) {
+      setError("Please enter a word");
+      return;
     }
-  };
 
-  const wordWrite = (word: string): boolean => {
-    return word !== "";
+    const wordData = await getWordDefinition(word);
+    setWordData(wordData);
   };
 
   return (
@@ -47,35 +24,26 @@ const Search: FunctionComponent = () => {
       <div class="container">
         <div class="wordForm">
           <input
-            placeholder="Type a word"
-            onInput={(e) => setWord(e.currentTarget.value)}
             type="text"
+            placeholder="Type a word"
+            value={word}
+            onInput={(e) => {
+              setError("");
+              setWord(e.currentTarget.value);
+            }}
           />
-          <p>{word}</p>
-          <button onClick={() => fetchWord(word)}>Search</button>
+
+          <button
+            onClick={() => fetchWordDefinition(word)}
+          >
+            Search
+          </button>
         </div>
-        {!wordWrite(word) && <p class="error">Please enter a word</p>}
-        {wordWrite(word) &&
-          (
-            <div class="wordDefinitions">
-              <h3>{word}</h3>
-              <ul>
-                {results.map((elem) => {
-                  <li>
-                    <p>
-                      <span>
-                        <strong>{elem.definition}</strong>
-                      </span>
-                      <span>{elem.example}</span>
-                    </p>
-                  </li>;
-                })}
-              </ul>
-            </div>
-          )}
+        {error && <p class="error">{error}</p>}
       </div>
+      {wordData && <WordViewer {...wordData} />}
     </>
   );
 };
 
-export default Search;
+export default WordIsland;

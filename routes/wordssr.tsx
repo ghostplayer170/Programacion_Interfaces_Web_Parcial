@@ -1,9 +1,7 @@
-import Header from "../components/Header.tsx";
-
 const Wordssr = () => {
   return (
     <>
-      <Header id={2} />
+      <h2>Not implemented</h2>;
     </>
   );
 };
